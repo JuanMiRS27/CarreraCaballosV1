@@ -1,0 +1,164 @@
+:root {
+    --bg-1: #f6efe3;
+    --bg-2: #e2d2ba;
+    --card: #fffdf8;
+    --ink: #2b241b;
+    --accent: #bf4f2f;
+    --accent-2: #2b6b5e;
+    --line: #d4c2a4;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Manrope", sans-serif;
+    color: var(--ink);
+    background: radial-gradient(circle at 20% 10%, var(--bg-1), var(--bg-2));
+    min-height: 100vh;
+}
+
+.layout {
+    width: min(1100px, 94vw);
+    margin: 2rem auto;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 340px 1fr;
+}
+
+.panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1.2rem;
+    box-shadow: 0 8px 28px rgba(43, 36, 27, 0.08);
+}
+
+h1, h2, h3, legend {
+    margin-top: 0;
+    font-family: "Bree Serif", serif;
+}
+
+.subtitle {
+    margin-top: -0.4rem;
+    color: #6e5f4f;
+}
+
+label, legend {
+    font-weight: 600;
+    display: block;
+    margin-top: 0.8rem;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 0.55rem;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #fff;
+}
+
+fieldset {
+    border: 1px dashed var(--line);
+    border-radius: 10px;
+    margin: 1rem 0;
+}
+
+.suits-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+}
+
+button {
+    border: 0;
+    border-radius: 10px;
+    padding: 0.6rem 0.8rem;
+    cursor: pointer;
+    font-weight: 700;
+    background: #e9ded0;
+    color: var(--ink);
+}
+
+button.primary {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    margin-top: 0.5rem;
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.4rem;
+    margin-top: 0.8rem;
+}
+
+.status {
+    margin-top: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-2);
+}
+
+.track {
+    display: grid;
+    gap: 0.6rem;
+}
+
+.lane {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 0.5rem;
+    background: #fff;
+}
+
+.lane-label {
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+}
+
+.lane-grid {
+    display: grid;
+    gap: 3px;
+}
+
+.cell {
+    min-height: 18px;
+    border-radius: 4px;
+    border: 1px solid #e8ddca;
+    background: #fdf8ef;
+}
+
+.cell.active {
+    background: linear-gradient(180deg, #ffc170, #ffa447);
+    border-color: #d8812d;
+}
+
+.cell.finish {
+    background: #d2edd5;
+    border-color: #71a97a;
+}
+
+.card-box {
+    margin-top: 1rem;
+}
+
+ul {
+    margin: 0;
+    padding-left: 1rem;
+    max-height: 220px;
+    overflow: auto;
+}
+
+@media (max-width: 920px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+}

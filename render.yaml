@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: carrera-caballos
+    runtime: java
+    plan: free
+    buildCommand: mvn clean package
+    startCommand: java -jar target/CarreraCaballos-0.0.1-SNAPSHOT.jar

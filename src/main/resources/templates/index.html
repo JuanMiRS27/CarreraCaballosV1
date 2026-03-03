@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrera de Caballos - Baraja Espanola</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bree+Serif&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<main class="layout">
+    <section class="panel config-panel">
+        <h1>Carrera de Caballos</h1>
+        <p class="subtitle">Simulador con baraja espanola: Oro, Espada, Bastos y Copa.</p>
+
+        <form id="game-form">
+            <label for="distance">Distancia de la carrera (3-30)</label>
+            <input id="distance" type="number" min="3" max="30" value="10" required>
+
+            <fieldset>
+                <legend>Selecciona entre 2 y 4 caballos</legend>
+                <div class="suits-grid">
+                    <label><input type="checkbox" value="ORO" checked> Oro</label>
+                    <label><input type="checkbox" value="ESPADA" checked> Espada</label>
+                    <label><input type="checkbox" value="BASTOS"> Bastos</label>
+                    <label><input type="checkbox" value="COPA"> Copa</label>
+                </div>
+            </fieldset>
+
+            <button type="submit" class="primary">Iniciar carrera</button>
+        </form>
+
+        <div class="actions">
+            <button id="step-btn" disabled>Avanzar 1 turno</button>
+            <button id="auto-btn" disabled>Modo automatico</button>
+            <button id="stop-btn" disabled>Detener</button>
+        </div>
+
+        <p id="status" class="status">Configura la carrera para comenzar.</p>
+    </section>
+
+    <section class="panel race-panel">
+        <h2>Pista</h2>
+        <div id="track" class="track"></div>
+
+        <div class="card-box">
+            <h3>Ultima carta</h3>
+            <p id="last-card">-</p>
+        </div>
+
+        <div class="card-box">
+            <h3>Historial</h3>
+            <ul id="history"></ul>
+        </div>
+    </section>
+</main>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
