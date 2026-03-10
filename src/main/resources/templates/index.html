@@ -11,26 +11,86 @@
 </head>
 <body>
 <main class="layout">
-    <section class="panel config-panel">
+    <section class="panel auth-panel">
         <h1>Carrera de Caballos</h1>
-        <p class="subtitle">Simulador con baraja espanola: Oro, Espada, Bastos y Copa.</p>
+        <p class="subtitle">Registro con 1000 puntos iniciales, grupos automaticos y apuestas con premio x5.</p>
 
-        <form id="game-form">
-            <label for="distance">Distancia de la carrera (3-30)</label>
-            <input id="distance" type="number" min="3" max="30" value="10" required>
+        <div class="auth-grid">
+            <form id="register-form">
+                <h2>Registro</h2>
+                <label for="register-name">Nombre</label>
+                <input id="register-name" type="text" maxlength="120" required>
 
-            <fieldset>
-                <legend>Selecciona entre 2 y 4 caballos</legend>
-                <div class="suits-grid">
-                    <label><input type="checkbox" value="ORO" checked> Oro</label>
-                    <label><input type="checkbox" value="ESPADA" checked> Espada</label>
-                    <label><input type="checkbox" value="BASTOS"> Bastos</label>
-                    <label><input type="checkbox" value="COPA"> Copa</label>
-                </div>
-            </fieldset>
+                <label for="register-email">Correo</label>
+                <input id="register-email" type="email" maxlength="160" required>
 
-            <button type="submit" class="primary">Iniciar carrera</button>
-        </form>
+                <label for="register-password">Contrasena</label>
+                <input id="register-password" type="password" minlength="4" maxlength="60" required>
+
+                <button type="submit" class="primary">Registrarme</button>
+            </form>
+
+            <form id="login-form">
+                <h2>Ingreso</h2>
+                <label for="login-email">Correo</label>
+                <input id="login-email" type="email" required>
+
+                <label for="login-password">Contrasena</label>
+                <input id="login-password" type="password" required>
+
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+
+        <div id="player-summary" class="summary hidden">
+            <p><strong>Jugador:</strong> <span id="player-name">-</span></p>
+            <p><strong>Correo:</strong> <span id="player-email">-</span></p>
+            <p><strong>Grupo:</strong> <span id="player-group">-</span></p>
+            <p><strong>Saldo:</strong> <span id="player-points">0</span> puntos</p>
+        </div>
+
+        <p id="status" class="status">Registra un usuario o inicia sesion para jugar.</p>
+    </section>
+
+    <section class="panel control-panel">
+        <div class="two-columns">
+            <form id="store-form">
+                <h2>Compra de puntos</h2>
+                <p class="small">Paquete fijo de 1000 puntos por 10.000 COP. Sin limite de compra.</p>
+                <label for="package-count">Cantidad de paquetes</label>
+                <input id="package-count" type="number" min="1" value="1" required>
+                <button type="submit">Comprar puntos</button>
+            </form>
+
+            <form id="game-form">
+                <h2>Nueva apuesta</h2>
+                <label for="distance">Distancia de la carrera (3-30)</label>
+                <input id="distance" type="number" min="3" max="30" value="10" required>
+
+                <label for="bet-points">Puntos a apostar</label>
+                <input id="bet-points" type="number" min="1" value="100" required>
+
+                <fieldset>
+                    <legend>Selecciona entre 2 y 4 caballos</legend>
+                    <div class="suits-grid">
+                        <label><input type="checkbox" value="ORO" checked> Oro</label>
+                        <label><input type="checkbox" value="ESPADA" checked> Espada</label>
+                        <label><input type="checkbox" value="BASTOS"> Bastos</label>
+                        <label><input type="checkbox" value="COPA"> Copa</label>
+                    </div>
+                </fieldset>
+
+                <label for="selected-horse">Caballo a apostar</label>
+                <select id="selected-horse">
+                    <option value="ORO">Oro</option>
+                    <option value="ESPADA">Espada</option>
+                    <option value="BASTOS">Bastos</option>
+                    <option value="COPA">Copa</option>
+                </select>
+
+                <button type="submit" class="primary">Crear carrera</button>
+            </form>
+        </div>
 
         <div class="actions">
             <button id="step-btn" disabled>Avanzar 1 turno</button>
@@ -38,11 +98,14 @@
             <button id="stop-btn" disabled>Detener</button>
         </div>
 
-        <p id="status" class="status">Configura la carrera para comenzar.</p>
+        <div class="recent-box">
+            <h2>Ultimas apuestas</h2>
+            <ul id="recent-games"></ul>
+        </div>
     </section>
 
     <section class="panel race-panel">
-        <h2>Pista</h2>
+        <h2>Pista activa</h2>
         <div id="track" class="track"></div>
 
         <div class="card-box">

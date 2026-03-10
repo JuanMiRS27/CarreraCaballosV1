@@ -25,7 +25,13 @@ public class RaceGameController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public GameStateResponse create(@Valid @RequestBody CreateGameRequest request) {
-        return raceGameService.createGame(request.distance(), request.horses());
+        return raceGameService.createGame(
+                request.userId(),
+                request.distance(),
+                request.horses(),
+                request.selectedHorse(),
+                request.betPoints()
+        );
     }
 
     @GetMapping("/{id}")

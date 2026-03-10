@@ -21,6 +21,23 @@ Juego web en Java + Spring Boot que automatiza la dinamica de carrera con cartas
 - Java 17+
 - Maven 3.9+ (o usar `mvnw`)
 
+## Base de datos
+
+La aplicacion usa MySQL como base principal.
+
+Valores por defecto en local:
+
+- URL: `jdbc:mysql://localhost:3306/carrera_caballos?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC`
+- Usuario: `root`
+- Password: vacio
+
+Variables de entorno soportadas:
+
+- `DB_URL`
+- `DB_USERNAME`
+- `DB_PASSWORD`
+- `PORT`
+
 ## Ejecutar en local
 
 ```bash
@@ -42,7 +59,10 @@ mvn test
 3. Configurar:
    - Build Command: `mvn clean package`
    - Start Command: `java -jar target/CarreraCaballos-0.0.1-SNAPSHOT.jar`
-4. Variable de entorno opcional:
+4. Variables de entorno:
+   - `DB_URL`
+   - `DB_USERNAME`
+   - `DB_PASSWORD`
    - `PORT` (Render la asigna automaticamente; la app ya la usa con `server.port=${PORT:8080}`).
 
 ## Enlace de despliegue
