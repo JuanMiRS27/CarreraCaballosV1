@@ -23,6 +23,7 @@ public record GameStateResponse(
         Map<SuitSpanish, Integer> positions,
         SuitSpanish winner,
         GameStatus status,
+        List<GameParticipantResponse> participants,
         TurnResult lastTurn,
         List<TurnResult> history
 ) {

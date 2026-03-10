@@ -8,4 +8,8 @@ import java.util.UUID;
 
 public interface GameSessionRecordRepository extends JpaRepository<GameSessionRecord, UUID> {
     List<GameSessionRecord> findTop10ByUserIdOrderByCreatedAtDesc(Long userId);
+
+    List<GameSessionRecord> findByRaceIdOrderByCreatedAtAsc(UUID raceId);
+
+    boolean existsByRaceIdAndUserId(UUID raceId, Long userId);
 }

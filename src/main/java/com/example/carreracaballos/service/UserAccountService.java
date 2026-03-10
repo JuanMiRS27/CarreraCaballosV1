@@ -1,6 +1,7 @@
 package com.example.carreracaballos.service;
 
 import com.example.carreracaballos.api.AuthResponse;
+import com.example.carreracaballos.api.ActiveGroupGameResponse;
 import com.example.carreracaballos.api.GroupSummaryResponse;
 import com.example.carreracaballos.api.RecentGameResponse;
 import com.example.carreracaballos.api.UserDashboardResponse;
@@ -8,6 +9,7 @@ import com.example.carreracaballos.model.GameSessionRecord;
 import com.example.carreracaballos.model.UserAccount;
 import com.example.carreracaballos.repository.GameSessionRecordRepository;
 import com.example.carreracaballos.repository.UserAccountRepository;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +24,16 @@ public class UserAccountService {
     private final PasswordHasher passwordHasher;
     private final GroupRoomService groupRoomService;
     private final GameSessionRecordRepository gameSessionRecordRepository;
+    private final ObjectProvider<RaceGameService> raceGameServiceProvider;
 
     public UserAccountService(UserAccountRepository userAccountRepository, PasswordHasher passwordHasher,
-                              GroupRoomService groupRoomService, GameSessionRecordRepository gameSessionRecordRepository) {
+                              GroupRoomService groupRoomService, GameSessionRecordRepository gameSessionRecordRepository,
+                              ObjectProvider<RaceGameService> raceGameServiceProvider) {
         this.userAccountRepository = userAccountRepository;
         this.passwordHasher = passwordHasher;
         this.groupRoomService = groupRoomService;
         this.gameSessionRecordRepository = gameSessionRecordRepository;
+        this.raceGameServiceProvider = raceGameServiceProvider;
     }
 
     @Transactional
@@ -64,11 +69,12 @@ public class UserAccountService {
     public UserDashboardResponse getDashboard(Long userId) {
         UserAccount user = getRequiredUser(userId);
         GroupSummaryResponse group = groupRoomService.getSummaryForUser(userId);
+        ActiveGroupGameResponse activeGame = getActiveGameOrNull(userId);
         List<RecentGameResponse> recentGames = gameSessionRecordRepository.findTop10ByUserIdOrderByCreatedAtDesc(userId)
                 .stream()
                 .map(this::toRecentGame)
                 .toList();
-        return new UserDashboardResponse(user.getId(), user.getName(), user.getEmail(), user.getPointsBalance(), group, recentGames);
+        return new UserDashboardResponse(user.getId(), user.getName(), user.getEmail(), user.getPointsBalance(), group, activeGame, recentGames);
     }
 
     @Transactional(readOnly = true)
@@ -92,5 +98,17 @@ public class UserAccountService {
                 game.getStatus(),
                 game.getCreatedAt()
         );
+    }
+
+    private ActiveGroupGameResponse getActiveGameOrNull(Long userId) {
+        RaceGameService raceGameService = raceGameServiceProvider.getIfAvailable();
+        if (raceGameService == null) {
+            return null;
+        }
+        try {
+            return raceGameService.getActiveGameForUser(userId);
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
     }
 }

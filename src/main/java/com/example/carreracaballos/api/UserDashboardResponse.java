@@ -8,6 +8,7 @@ public record UserDashboardResponse(
         String email,
         long pointsBalance,
         GroupSummaryResponse group,
+        ActiveGroupGameResponse activeGame,
         List<RecentGameResponse> recentGames
 ) {
 }

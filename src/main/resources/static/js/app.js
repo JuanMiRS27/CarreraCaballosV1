@@ -10,6 +10,8 @@ const trackEl = document.getElementById("track");
 const lastCardEl = document.getElementById("last-card");
 const historyEl = document.getElementById("history");
 const recentGamesEl = document.getElementById("recent-games");
+const participantsEl = document.getElementById("participants");
+const activeRaceNoteEl = document.getElementById("active-race-note");
 const summaryEl = document.getElementById("player-summary");
 const playerNameEl = document.getElementById("player-name");
 const playerEmailEl = document.getElementById("player-email");
@@ -90,7 +92,7 @@ gameForm.addEventListener("submit", async (event) => {
         });
         const data = await response.json();
         if (!response.ok) {
-            setStatus(data.message || "No se pudo crear la carrera.");
+            setStatus(data.message || "No se pudo entrar a la carrera.");
             return;
         }
 
@@ -98,10 +100,8 @@ gameForm.addEventListener("submit", async (event) => {
         currentState = data;
         renderState(data);
         updatePlayerBalance(data.playerPointsBalance);
-        stepBtn.disabled = false;
-        autoBtn.disabled = false;
-        stopBtn.disabled = true;
-        setStatus(`Carrera creada para ${data.userName}. Apuesta: ${data.betPoints} puntos a ${displaySuit(data.selectedHorse)}.`);
+        syncGameControls(data);
+        setStatus(`Apuesta registrada en la carrera del grupo: ${data.betPoints} puntos a ${displaySuit(data.selectedHorse)}.`);
         await loadDashboard();
     } catch (error) {
         setStatus("Error de conexion con el servidor.");
@@ -176,6 +176,41 @@ async function loadDashboard() {
         updatePlayerBalance(data.pointsBalance);
         renderRecentGames(data.recentGames);
         summaryEl.classList.remove("hidden");
+
+        if (data.activeGame) {
+            gameId = data.activeGame.id;
+            activeRaceNoteEl.textContent = `Carrera activa: ${data.activeGame.participantCount} participante(s), turno ${data.activeGame.turn}, distancia ${data.activeGame.distance}.`;
+            await loadCurrentGame();
+        } else {
+            gameId = null;
+            currentState = null;
+            activeRaceNoteEl.textContent = "No hay una carrera activa en este momento.";
+            participantsEl.innerHTML = "";
+            trackEl.innerHTML = "";
+            historyEl.innerHTML = "";
+            lastCardEl.textContent = "-";
+            syncGameControls(null);
+        }
+    } catch (error) {
+        setStatus("Error de conexion con el servidor.");
+    }
+}
+
+async function loadCurrentGame() {
+    if (!gameId || !userId) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/games/${gameId}?userId=${userId}`);
+        const data = await response.json();
+        if (!response.ok) {
+            setStatus(data.message || "No fue posible cargar la carrera activa.");
+            return;
+        }
+        currentState = data;
+        renderState(data);
+        syncGameControls(data);
     } catch (error) {
         setStatus("Error de conexion con el servidor.");
     }
@@ -187,7 +222,7 @@ async function advanceTurn() {
     }
 
     try {
-        const response = await fetch(`/api/games/${gameId}/step`, { method: "POST" });
+        const response = await fetch(`/api/games/${gameId}/step?userId=${userId}`, { method: "POST" });
         const data = await response.json();
         if (!response.ok) {
             setStatus(data.message || "No se pudo avanzar el turno.");
@@ -197,15 +232,13 @@ async function advanceTurn() {
         currentState = data;
         renderState(data);
         updatePlayerBalance(data.playerPointsBalance);
+        syncGameControls(data);
 
         if (data.winner) {
             const payoutMessage = data.payoutPoints > 0
                 ? ` Ganaste ${data.payoutPoints} puntos.`
                 : " No hubo premio en esta apuesta.";
             setStatus(`Ganador: ${displaySuit(data.winner)} en el turno ${data.turn}.${payoutMessage}`);
-            stepBtn.disabled = true;
-            autoBtn.disabled = true;
-            stopBtn.disabled = true;
             await loadDashboard();
             return true;
         }
@@ -230,6 +263,11 @@ function renderState(state) {
     renderTrack(state);
     renderLastCard(state.lastTurn);
     renderHistory(state.history);
+    renderParticipants(state.participants);
+    const note = state.status === "ACTIVE"
+        ? `Carrera activa del grupo ${state.groupCode}. ${state.participants.length} participante(s).`
+        : `Carrera finalizada del grupo ${state.groupCode}.`;
+    activeRaceNoteEl.textContent = note;
 }
 
 function renderTrack(state) {
@@ -241,7 +279,7 @@ function renderTrack(state) {
 
         const label = document.createElement("div");
         label.className = "lane-label";
-        const selectedTag = horse === state.selectedHorse ? " | Apuesta" : "";
+        const selectedTag = horse === state.selectedHorse ? " | Tu apuesta" : "";
         label.textContent = `${displaySuit(horse)} - Posicion ${pos}/${state.distance}${selectedTag}`;
         lane.appendChild(label);
 
@@ -301,6 +339,23 @@ function renderHistory(history) {
     }
 }
 
+function renderParticipants(participants) {
+    participantsEl.innerHTML = "";
+    if (!participants || participants.length === 0) {
+        const li = document.createElement("li");
+        li.textContent = "Aun no hay apuestas en esta carrera.";
+        participantsEl.appendChild(li);
+        return;
+    }
+
+    for (const participant of participants) {
+        const li = document.createElement("li");
+        const currentTag = participant.currentUser ? " | Tu apuesta" : "";
+        li.textContent = `${participant.userName}: ${participant.betPoints} pts a ${displaySuit(participant.selectedHorse)}${currentTag}`;
+        participantsEl.appendChild(li);
+    }
+}
+
 function renderRecentGames(games) {
     recentGamesEl.innerHTML = "";
     if (!games || games.length === 0) {
@@ -316,6 +371,13 @@ function renderRecentGames(games) {
         li.textContent = `${new Date(item.createdAt).toLocaleString()} | Apostaste ${item.betPoints} a ${displaySuit(item.selectedHorse)} | Ganador: ${winner} | Premio: ${item.payoutPoints}`;
         recentGamesEl.appendChild(li);
     }
+}
+
+function syncGameControls(state) {
+    const active = state && state.status === "ACTIVE";
+    stepBtn.disabled = !active;
+    autoBtn.disabled = !active;
+    stopBtn.disabled = true;
 }
 
 function stopAuto() {

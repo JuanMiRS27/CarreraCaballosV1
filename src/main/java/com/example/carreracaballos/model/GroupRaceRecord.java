@@ -15,38 +15,20 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "game_sessions")
-public class GameSessionRecord {
+@Table(name = "group_races")
+public class GroupRaceRecord {
     @Id
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserAccount user;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "group_id", nullable = false)
     private GroupRoom group;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "race_id", nullable = false)
-    private GroupRaceRecord race;
 
     @Column(nullable = false)
     private int distance;
 
     @Column(nullable = false, length = 64)
     private String horsesCsv;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 16)
-    private SuitSpanish selectedHorse;
-
-    @Column(nullable = false)
-    private long betPoints;
-
-    @Column(nullable = false)
-    private long payoutPoints;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 16)
@@ -61,21 +43,14 @@ public class GameSessionRecord {
 
     private Instant finishedAt;
 
-    protected GameSessionRecord() {
+    protected GroupRaceRecord() {
     }
 
-    public GameSessionRecord(UUID id, UserAccount user, GroupRoom group, GroupRaceRecord race, int distance, String horsesCsv,
-                             SuitSpanish selectedHorse, long betPoints, long payoutPoints, GameStatus status,
-                             Instant createdAt) {
+    public GroupRaceRecord(UUID id, GroupRoom group, int distance, String horsesCsv, GameStatus status, Instant createdAt) {
         this.id = id;
-        this.user = user;
         this.group = group;
-        this.race = race;
         this.distance = distance;
         this.horsesCsv = horsesCsv;
-        this.selectedHorse = selectedHorse;
-        this.betPoints = betPoints;
-        this.payoutPoints = payoutPoints;
         this.status = status;
         this.createdAt = createdAt;
     }
@@ -84,28 +59,16 @@ public class GameSessionRecord {
         return id;
     }
 
-    public UserAccount getUser() {
-        return user;
-    }
-
     public GroupRoom getGroup() {
         return group;
     }
 
-    public GroupRaceRecord getRace() {
-        return race;
+    public int getDistance() {
+        return distance;
     }
 
-    public SuitSpanish getSelectedHorse() {
-        return selectedHorse;
-    }
-
-    public long getBetPoints() {
-        return betPoints;
-    }
-
-    public long getPayoutPoints() {
-        return payoutPoints;
+    public String getHorsesCsv() {
+        return horsesCsv;
     }
 
     public GameStatus getStatus() {
@@ -120,9 +83,8 @@ public class GameSessionRecord {
         return createdAt;
     }
 
-    public void finish(SuitSpanish winnerHorse, long payoutPoints, Instant finishedAt) {
+    public void finish(SuitSpanish winnerHorse, Instant finishedAt) {
         this.winnerHorse = winnerHorse;
-        this.payoutPoints = payoutPoints;
         this.finishedAt = finishedAt;
         this.status = GameStatus.FINISHED;
     }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
@@ -35,12 +36,17 @@ public class RaceGameController {
     }
 
     @GetMapping("/{id}")
-    public GameStateResponse get(@PathVariable UUID id) {
-        return raceGameService.getGame(id);
+    public GameStateResponse get(@PathVariable UUID id, @RequestParam Long userId) {
+        return raceGameService.getGame(id, userId);
     }
 
     @PostMapping("/{id}/step")
-    public GameStateResponse step(@PathVariable UUID id) {
-        return raceGameService.step(id);
+    public GameStateResponse step(@PathVariable UUID id, @RequestParam Long userId) {
+        return raceGameService.step(id, userId);
+    }
+
+    @GetMapping("/active")
+    public ActiveGroupGameResponse active(@RequestParam Long userId) {
+        return raceGameService.getActiveGameForUser(userId);
     }
 }
