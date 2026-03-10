@@ -34,11 +34,11 @@ body {
 }
 
 .layout {
-    width: min(1240px, 94vw);
+    width: min(1320px, 94vw);
     margin: 2rem auto;
     display: grid;
     gap: 1rem;
-    grid-template-columns: 360px 420px 1fr;
+    grid-template-columns: 1fr;
 }
 
 .panel {
@@ -47,6 +47,36 @@ body {
     border-radius: 16px;
     padding: 1.2rem;
     box-shadow: 0 18px 40px rgba(14, 34, 17, 0.22);
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: stretch;
+}
+
+.auth-panel,
+.control-panel,
+.race-panel {
+    width: 100%;
+}
+
+.auth-panel {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.95fr) minmax(420px, 1.5fr) minmax(240px, 0.8fr);
+    gap: 1rem;
+    align-items: start;
+}
+
+.auth-header {
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+}
+
+.auth-header .status {
+    margin-top: 0.5rem;
 }
 
 h1, h2, h3, legend {
@@ -142,6 +172,27 @@ button:disabled {
     gap: 1rem;
 }
 
+.stack-box {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.control-panel,
+.race-panel {
+    min-height: 760px;
+}
+
+.control-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.race-panel {
+    display: flex;
+    flex-direction: column;
+}
+
 .small {
     color: var(--muted);
     font-size: 0.92rem;
@@ -169,6 +220,8 @@ form {
     display: grid;
     gap: 0.6rem;
     min-height: 150px;
+    flex: 1;
+    align-content: start;
 }
 
 .lane {
@@ -219,17 +272,24 @@ ul {
     }
 }
 
-@media (max-width: 1120px) {
-    .layout {
+@media (max-width: 1180px) {
+    .auth-panel {
         grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 920px) {
-    .layout {
+@media (max-width: 1080px) {
+    .content-grid {
         grid-template-columns: 1fr;
     }
 
+    .control-panel,
+    .race-panel {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 920px) {
     .actions {
         grid-template-columns: 1fr;
     }
